@@ -16,7 +16,6 @@ class API_NewsRepository extends NewsRepository {
     } catch (exception) {
       print(exception);
     }
-    print(news);
     return news;
   }
 }
