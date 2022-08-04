@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:mvvm_api/modules/news/news_detailes_view.dart';
 import '../../api/repositories/api_news_repository.dart';
 import '../../view_models/news_view_model.dart';
@@ -17,21 +18,26 @@ class NewsView extends StatelessWidget {
         child: Obx(
           () => newsViewModel.isLoading.value == true
               ? const CircularProgressIndicator()
-              : ListView.builder(
-                  itemCount: newsViewModel.newsList.length,
-                  itemBuilder: (context, index) => ListTile(
-                    title: Text(newsViewModel.newsList[index].newsModel.title
-                        .toString()),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NewsDetailesView(
+              : LazyLoadScrollView(
+                  onEndOfPage: newsViewModel.loadNextPage,
+                  isLoading: newsViewModel.lastPage,
+                  child: ListView.builder(
+                    itemCount: newsViewModel.newsList.length,
+                    itemBuilder: (context, index) => ListTile(
+                      title: Text(newsViewModel.newsList[index].newsModel.title
+                          .toString()),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewsDetailesView(
                               newsDetailesViewModel:
-                                  newsViewModel.newsList[index]),
-                        ),
-                      );
-                    },
+                                  newsViewModel.newsList[index],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
         ),
